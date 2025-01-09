@@ -1,0 +1,136 @@
+import { useState } from 'react'
+import { Markdown } from 'react-showdown'
+import { RequestSourceCodeType, RequestSourceCodeResponse, RequestSourceCode } from './api'
+import React from 'react'
+import { Button, Card, H3, Label, ProgressBar, TextArea } from '@blueprintjs/core'
+import AceEditor from "react-ace"
+
+import "ace-builds/src-noconflict/mode-c_cpp";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/theme-tomorrow";
+import "ace-builds/src-noconflict/ext-language_tools";
+
+function GenerateSourceCode() {
+  const [statement, setStatement] = useState('')
+  const [editorial, setEditorial] = useState('')
+  const [humanRequest, setHumanRequest] = useState('')
+  const [sourceCode, setSourceCode] = useState('Press submit to generate the source code...')
+  const [generating, setGenerating] = useState(false)
+  const [authToken, setAuthToken] = useState(window.localStorage.getItem('authToken') || '')
+
+  const handleSubmit = async () => {
+    const request: RequestSourceCodeType = {
+      statement,
+      editorial,
+      authToken,
+      humanRequest,
+    }
+
+    setSourceCode('Generating source code...')
+    setGenerating(true)
+    console.log("Sending request", request)
+    const response: RequestSourceCodeResponse = await RequestSourceCode(request).catch((error) => {
+      return { sourceCode: '' + error }
+    })
+    console.log("Received response", response)
+    setSourceCode(response.sourceCode)
+    setGenerating(false)
+  }
+
+  return (
+    <div style={{
+      padding: "20px",
+      display: "flex",
+      flexDirection: "row",
+    }}>
+
+      <div style={{
+        width: "50%",
+        padding: "20px",
+      }}>
+        <H3>Problem Details</H3>
+        <Label>
+          1. Problem Statement
+          <TextArea
+            value={statement}
+            fill
+            onChange={(e) => setStatement(e.target.value)}
+            style={{ minHeight: "200px" }}
+          />
+        </Label>
+
+        <Label style={{ paddingTop: "20px" }}>
+          2. Editorial
+          <TextArea
+            value={editorial}
+            fill
+            onChange={(e) => setEditorial(e.target.value)}
+            style={{ minHeight: "200px" }}
+          />
+        </Label>
+
+        <Label style={{ paddingTop: "20px" }}>
+          3. Additional LLM Instructions
+          <TextArea
+            value={humanRequest}
+            fill
+            onChange={(e) => setHumanRequest(e.target.value)}
+            style={{ minHeight: "200px" }}
+          />
+        </Label>
+
+        <Label style={{ paddingTop: "20px" }}>
+          4. Auth Token
+          <input
+            type='text'
+            value={authToken}
+            onChange={(e) => {
+              setAuthToken(e.target.value)
+              window.localStorage.setItem('authToken', e.target.value)
+            }}
+            style={{ width: "100%" }}
+          />
+        </Label>
+
+        <Button intent="primary" onClick={handleSubmit}>
+          Generate Source Code
+        </Button>
+      </div>
+      <div style={{
+        width: "50%",
+        padding: "20px",
+      }}>
+        <H3>Source Code</H3>
+
+        <div style={{
+          "position": "relative",
+        }}>
+          {generating && <div style={{
+            position: "absolute",
+            top: -7,
+            left: 0,
+            width: "100%",
+          }}>
+            <ProgressBar intent='primary' />
+          </div>}
+        </div>
+
+        <Card style={{ "padding": "0" }}>
+          <div style={{ height: "600px" }}>
+            <AceEditor
+              style={{ width: "100%", height: "100%" }}
+              mode="c_cpp"
+              theme="tomorrow"
+              readOnly={true}
+              value={sourceCode}
+              name="UNIQUE_ID_OF_DIV"
+              editorProps={{ $blockScrolling: true }}
+            />,
+          </div>
+        </Card>
+      </div>
+    </div >
+  )
+}
+
+export default GenerateSourceCode
