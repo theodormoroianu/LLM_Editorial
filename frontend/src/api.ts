@@ -4,6 +4,7 @@ interface RequestEditorialType {
   solutions: string[],
   humanRequest: string,
   authToken: string,
+  model: "mistral" | "gemini",
 }
 
 interface RequestEditorialResponse {
@@ -32,6 +33,7 @@ interface RequestSourceCodeType {
   editorial: string,
   humanRequest: string,
   authToken: string,
+  model: "mistral" | "gemini",
 }
 
 interface RequestSourceCodeResponse {

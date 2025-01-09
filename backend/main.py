@@ -4,18 +4,53 @@ import uvicorn
 from mistralai import Mistral
 import logging
 import os
+import google.generativeai as genai
 
 logging.basicConfig(level=logging.INFO)
 
+# Allowed tokens for securing the API
+allowed_auth_tokens = {os.environ["ALLOWED_TOKEN"]}
 
-allowed_auth_tokens = {""}
+# Mistral API key and model
 mistral_api_key = os.environ["MISTRAL_API_KEY"]
 mistral_model = "mistral-large-latest"
 mistral_agent_id = "ag:56a53bd1:20250107:cp-helper:e0ac0c60"
 mistral_client = Mistral(api_key=mistral_api_key)
 
+# Gemini API key and model
+gemini_api_key = os.environ["GEMINI_API_KEY"]
+gemini_model = "gemini-large-latest"
+genai.configure(api_key=gemini_api_key)
+gemini_client = genai.GenerativeModel("gemini-1.5-flash")
 
+# FastAPI app
 app = FastAPI()
+
+
+def ask_mistral(question: str) -> str:
+    """
+    Ask a question to the Mistral model
+    """
+    messages = [
+        {
+            "role": "user",
+            "content": question,
+        }
+    ]
+
+    result = mistral_client.agents.complete(
+        agent_id=mistral_agent_id,
+        messages=messages,
+    )
+
+    return result.choices[0].message.content
+
+
+def ask_gemini(question: str) -> str:
+    """
+    Ask a question to the Gemini model
+    """
+    return gemini_client.generate_content(question).text
 
 
 class EditorialRequestType(BaseModel):
@@ -23,6 +58,7 @@ class EditorialRequestType(BaseModel):
     solutions: list[str]
     humanRequest: str
     authToken: str
+    model: str
 
     def to_message(self):
         ans = "You are tasked with creating a detailed editorial for a competitive programming task. You are given the statement of the problem. If the language is not english, please keep the same language for the editorial.\n"
@@ -63,6 +99,7 @@ class SourceCodeRequestType(BaseModel):
     editorial: str
     humanRequest: str
     authToken: str
+    model: str
 
     def to_message(self):
         ans = "You are tasked with generating a 100% working, valid, correct solution for a competitive programming task. You are given the statement of the problem and an editorial, which describes the solution you need to follow.\n"
@@ -100,22 +137,17 @@ async def generate_editorials(request: EditorialRequestType):
             detail="Invalid authentication token",
         )
 
-    print("Sending the following request:\n\n", request.to_message())
-    messages = [
-        {
-            "role": "user",
-            "content": request.to_message(),
-        }
-    ]
+    if request.model not in ["gemini", "mistral"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid model",
+        )
 
-    result = mistral_client.agents.complete(
-        agent_id=mistral_agent_id,
-        messages=messages,
-    )
+    if request.model == "mistral":
+        editorial = ask_mistral(request.to_message())
+    else:
+        editorial = ask_gemini(request.to_message())
 
-    editorial = result.choices[0].message.content
-
-    print("Received the following response:\n\n", editorial)
     return EditorialResponseType(editorial=editorial)
 
 
@@ -127,22 +159,17 @@ async def generate_editorials(request: SourceCodeRequestType):
             detail="Invalid authentication token",
         )
 
-    print("Sending the following request:\n\n", request.to_message())
-    messages = [
-        {
-            "role": "user",
-            "content": request.to_message(),
-        }
-    ]
+    if request.model not in ["gemini", "mistral"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid model",
+        )
 
-    result = mistral_client.agents.complete(
-        agent_id=mistral_agent_id,
-        messages=messages,
-    )
+    if request.model == "mistral":
+        sourcecode = ask_mistral(request.to_message())
+    else:
+        sourcecode = ask_gemini(request.to_message())
 
-    sourcecode = result.choices[0].message.content
-
-    print("Received the following response:\n\n", sourcecode)
     return SourceCodeResponseType(sourceCode=sourcecode)
 
 

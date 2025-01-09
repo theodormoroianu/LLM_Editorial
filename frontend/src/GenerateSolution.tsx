@@ -17,6 +17,7 @@ function GenerateSourceCode() {
   const [sourceCode, setSourceCode] = useState('Press submit to generate the source code...')
   const [generating, setGenerating] = useState(false)
   const [authToken, setAuthToken] = useState(window.localStorage.getItem('authToken') || '')
+  const [model, setModel] = useState<"mistral" | "gemini">("mistral")
 
   const handleSubmit = async () => {
     const request: RequestSourceCodeType = {
@@ -24,6 +25,7 @@ function GenerateSourceCode() {
       editorial,
       authToken,
       humanRequest,
+      model,
     }
 
     setSourceCode('Generating source code...')
@@ -80,7 +82,19 @@ function GenerateSourceCode() {
         </Label>
 
         <Label style={{ paddingTop: "20px" }}>
-          4. Auth Token
+          4. Model
+          <select
+            value={model}
+            onChange={(e) => setModel(e.target.value as "mistral" | "gemini")}
+            style={{ width: "100%" }}
+          >
+            <option value="mistral">Mistral</option>
+            <option value="gemini">Gemini</option>
+          </select>
+        </Label>
+
+        <Label style={{ paddingTop: "20px" }}>
+          5. Auth Token
           <input
             type='text'
             value={authToken}

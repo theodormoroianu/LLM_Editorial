@@ -11,6 +11,7 @@ function GenerateEditorials() {
   const [editorial, setEditorial] = useState('Press submit to generate the editorial...')
   const [generating, setGenerating] = useState(false)
   const [authToken, setAuthToken] = useState(window.localStorage.getItem('authToken') || '')
+  const [model, setModel] = useState<"mistral" | "gemini">("mistral")
 
   const handleAddSolution = () => {
     setSolutions([...solutions, ''])
@@ -28,6 +29,7 @@ function GenerateEditorials() {
       solutions,
       humanRequest,
       authToken,
+      model,
     }
 
     setEditorial('Generating editorial...')
@@ -100,7 +102,19 @@ function GenerateEditorials() {
         </Label>
 
         <Label style={{ paddingTop: "20px" }}>
-          4. Auth Token
+          4. Model
+          <select
+            value={model}
+            onChange={(e) => setModel(e.target.value as "mistral" | "gemini")}
+            style={{ width: "100%" }}
+          >
+            <option value="mistral">Mistral</option>
+            <option value="gemini">Gemini</option>
+          </select>
+        </Label>
+
+        <Label style={{ paddingTop: "20px" }}>
+          5. Auth Token
           <input
             type='text'
             value={authToken}
