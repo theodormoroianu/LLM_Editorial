@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import './App.css'
 import React from 'react'
 import { Navbar, Alignment, Button, Card, H3 } from '@blueprintjs/core'
@@ -37,34 +36,36 @@ function App() {
   return (
 
     <Router>
-      <div>
-        <Navbar>
-          <Navbar.Group align={Alignment.LEFT}>
-            <Navbar.Heading>LLM Editorials Checker</Navbar.Heading>
-            <Navbar.Divider />
-            <Button
-              className="bp5-minimal"
-              icon="home" text="Home"
-              active={window.location.pathname.endsWith('/')}
-              onClick={() => window.location.href = '/'}
-            />
-            <Button
-              className="bp5-minimal"
-              icon="automatic-updates"
-              text="Generate Editorial"
-              active={window.location.pathname.endsWith('/generate-editorials')}
-              onClick={() => window.location.href = '/generate-editorials'}
-            />
-            <Button
-              className="bp5-minimal"
-              icon="automatic-updates"
-              text="Generate Solution"
-              active={window.location.pathname.endsWith('/generate-solutions')}
-              onClick={() => window.location.href = '/generate-solutions'}
-            />
-          </Navbar.Group>
-        </Navbar>
-        <div>
+      <div style={{ "height": "100vh", "display": "flex", "flexDirection": "column" }}>
+        <div style={{ height: "50px" }}>
+          <Navbar style={{ "height": "50px" }}>
+            <Navbar.Group align={Alignment.LEFT}>
+              <Navbar.Heading>LLM Editorials Checker</Navbar.Heading>
+              <Navbar.Divider />
+              <Button
+                className="bp5-minimal"
+                icon="home" text="Home"
+                active={window.location.pathname.endsWith('/')}
+                onClick={() => window.location.href = '/'}
+              />
+              <Button
+                className="bp5-minimal"
+                icon="automatic-updates"
+                text="Generate Editorial"
+                active={window.location.pathname.endsWith('/generate-editorials')}
+                onClick={() => window.location.href = '/generate-editorials'}
+              />
+              <Button
+                className="bp5-minimal"
+                icon="automatic-updates"
+                text="Generate Solution"
+                active={window.location.pathname.endsWith('/generate-solutions')}
+                onClick={() => window.location.href = '/generate-solutions'}
+              />
+            </Navbar.Group>
+          </Navbar>
+        </div>
+        <div style={{ height: "calc(100vh - 50px)" }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/generate-editorials" element={<GenerateEditorials />} />

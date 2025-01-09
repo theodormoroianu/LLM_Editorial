@@ -1,8 +1,30 @@
 import { useState } from 'react'
-import { Markdown } from 'react-showdown'
 import { RequestEditorialType, RequestEditorialResponse, RequestEditorial } from './api'
 import React from 'react'
-import { Button, Card, H3, Label, ProgressBar, TextArea } from '@blueprintjs/core'
+import { Button, H3, Label, ProgressBar, TextArea } from '@blueprintjs/core'
+import MDEditor from '@uiw/react-md-editor';
+
+import '@uiw/react-md-editor/markdown-editor.css';
+
+interface MarkdownPreviewerProps {
+  markdown: string
+  setMarkdown: React.Dispatch<React.SetStateAction<string>>
+}
+
+const MarkdownPreviewer = ({ markdown, setMarkdown }: MarkdownPreviewerProps) => {
+  return <div className="container" data-color-mode="light" style={{
+    padding: "0px",
+    flex: 1
+  }}>
+    <MDEditor
+      value={markdown}
+      onChange={value => setMarkdown(value || '')}
+      preview="preview"
+      height="100%"
+    />
+  </div>
+}
+
 
 function GenerateEditorials() {
   const [statement, setStatement] = useState('')
@@ -45,14 +67,16 @@ function GenerateEditorials() {
 
   return (
     <div style={{
-      padding: "20px",
+      paddingLeft: "20px",
       display: "flex",
       flexDirection: "row",
+      height: "100%"
     }}>
 
       <div style={{
         width: "50%",
         padding: "20px",
+        overflowY: "scroll",
       }}>
         <H3>Problem Details</H3>
         <Label>
@@ -130,9 +154,20 @@ function GenerateEditorials() {
           Generate Editorial
         </Button>
       </div>
+
+      <div style={{
+        border: "2px dashed",
+        borderColor: "#ccc",
+        height: "100%",
+        position: "relative",
+      }}></div>
+
       <div style={{
         width: "50%",
         padding: "20px",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}>
         <H3>Editorial</H3>
 
@@ -149,9 +184,7 @@ function GenerateEditorials() {
           </div>}
         </div>
 
-        <Card>
-          <Markdown markup={editorial} markdown={editorial} />
-        </Card>
+        <MarkdownPreviewer markdown={editorial} setMarkdown={setEditorial} />
       </div>
     </div >
   )

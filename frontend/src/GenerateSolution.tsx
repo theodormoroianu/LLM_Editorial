@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Markdown } from 'react-showdown'
 import { RequestSourceCodeType, RequestSourceCodeResponse, RequestSourceCode } from './api'
 import React from 'react'
 import { Button, Card, H3, Label, ProgressBar, TextArea } from '@blueprintjs/core'
@@ -41,14 +40,17 @@ function GenerateSourceCode() {
 
   return (
     <div style={{
-      padding: "20px",
+      paddingLeft: "20px",
+      paddingRight: "20px",
       display: "flex",
       flexDirection: "row",
+      height: "100%"
     }}>
 
       <div style={{
         width: "50%",
         padding: "20px",
+        overflowY: "scroll",
       }}>
         <H3>Problem Details</H3>
         <Label>
@@ -110,9 +112,21 @@ function GenerateSourceCode() {
           Generate Source Code
         </Button>
       </div>
+
+      <div style={{
+        border: "2px dashed",
+        borderColor: "#ccc",
+        height: "100%",
+        position: "relative",
+      }}></div>
+
       <div style={{
         width: "50%",
         padding: "20px",
+        overflowY: "scroll",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}>
         <H3>Source Code</H3>
 
@@ -129,13 +143,12 @@ function GenerateSourceCode() {
           </div>}
         </div>
 
-        <Card style={{ "padding": "0" }}>
-          <div style={{ height: "600px" }}>
+        <Card style={{ "padding": "0", flex: "1" }}>
+          <div style={{ height: "100%" }}>
             <AceEditor
               style={{ width: "100%", height: "100%" }}
               mode="c_cpp"
               theme="tomorrow"
-              readOnly={true}
               value={sourceCode}
               name="UNIQUE_ID_OF_DIV"
               editorProps={{ $blockScrolling: true }}

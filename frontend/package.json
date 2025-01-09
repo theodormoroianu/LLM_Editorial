@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "@blueprintjs/core": "^5.16.2",
+    "@uiw/react-md-editor": "^4.0.5",
     "codemirror": "^5.65.18",
     "react": "^18.3.1",
     "react-ace": "^13.0.0",
     "react-codemirror2": "^8.0.0",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.1.1",
-    "react-showdown": "^2.3.1"
+    "react-router-dom": "^7.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
