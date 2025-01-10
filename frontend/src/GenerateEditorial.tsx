@@ -14,7 +14,9 @@ interface MarkdownPreviewerProps {
 const MarkdownPreviewer = ({ markdown, setMarkdown }: MarkdownPreviewerProps) => {
   return <div className="container" data-color-mode="light" style={{
     padding: "0px",
-    flex: 1
+    flex: "1 1 auto",
+    overflowY: "scroll",
+    border: "1px solid #ccc",
   }}>
     <MDEditor
       value={markdown}
@@ -85,7 +87,10 @@ function GenerateEditorials() {
             value={statement}
             fill
             onChange={(e) => setStatement(e.target.value)}
-            style={{ minHeight: "200px" }}
+            style={{
+              height: "100px",
+              resize: "vertical"
+            }}
           />
         </Label>
 
@@ -97,7 +102,10 @@ function GenerateEditorials() {
               fill
               value={solution}
               onChange={(e) => handleSolutionChange(index, e.target.value)}
-              style={{ minHeight: "200px" }}
+              style={{
+                height: "100px",
+                resize: "vertical"
+              }}
             />
           ))}
         </Label>
@@ -121,7 +129,10 @@ function GenerateEditorials() {
             value={humanRequest}
             fill
             onChange={(e) => setHumanRequest(e.target.value)}
-            style={{ minHeight: "200px" }}
+            style={{
+              height: "100px",
+              resize: "vertical"
+            }}
           />
         </Label>
 

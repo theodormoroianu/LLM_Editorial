@@ -59,7 +59,10 @@ function GenerateSourceCode() {
             value={statement}
             fill
             onChange={(e) => setStatement(e.target.value)}
-            style={{ minHeight: "200px" }}
+            style={{
+              height: "100px",
+              resize: "vertical"
+            }}
           />
         </Label>
 
@@ -69,7 +72,10 @@ function GenerateSourceCode() {
             value={editorial}
             fill
             onChange={(e) => setEditorial(e.target.value)}
-            style={{ minHeight: "200px" }}
+            style={{
+              height: "100px",
+              resize: "vertical"
+            }}
           />
         </Label>
 
@@ -79,7 +85,10 @@ function GenerateSourceCode() {
             value={humanRequest}
             fill
             onChange={(e) => setHumanRequest(e.target.value)}
-            style={{ minHeight: "200px" }}
+            style={{
+              height: "100px",
+              resize: "vertical"
+            }}
           />
         </Label>
 
