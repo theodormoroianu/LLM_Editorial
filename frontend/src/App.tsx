@@ -5,6 +5,7 @@ import '@blueprintjs/core/lib/css/blueprint.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import GenerateEditorials from './GenerateEditorial'
 import GenerateSolution from './GenerateSolution'
+import CanvasAnimation from './Animation'
 
 
 function Home() {
@@ -13,22 +14,36 @@ function Home() {
     marginRight: '5vh',
     marginTop: '10vh',
   }
-
   return <div style={{
-    "display": "flex",
-    "flexDirection": "row",
-    "justifyContent": "center",
+    height: "100%",
+    width: "100%",
+    position: "relative",
   }}>
-    <Card elevation={3} style={cardStyle}>
-      <H3>Generate Editorials</H3>
-      <p>Given a statement and, optionally, a correct solution, generate a detailed editorial of the problem.</p>
-      <Button intent="primary" onClick={() => window.location.href = "/generate-editorials"}>Generate Editorials</Button>
-    </Card>
-    <Card elevation={3} style={cardStyle}>
-      <H3>Generate Solutions</H3>
-      <p>Given a statement and, optionally, an editorial, generate a correct solution to the problem.</p>
-      <Button intent="primary" onClick={() => window.location.href = "/generate-solutions"}>Generate Solutions</Button>
-    </Card>
+    <div style={{
+      position: "absolute",
+      height: "100%",
+      width: "100%",
+      zIndex: -1,
+    }}>
+      <CanvasAnimation />
+    </div>
+    <div style={{
+      "display": "flex",
+      "flexDirection": "row",
+      "justifyContent": "center",
+    }}>
+
+      <Card elevation={3} style={cardStyle}>
+        <H3>Generate Editorials</H3>
+        <p>Given a statement and, optionally, a correct solution, generate a detailed editorial of the problem.</p>
+        <Button intent="primary" onClick={() => window.location.href = "/generate-editorials"}>Generate Editorials</Button>
+      </Card>
+      <Card elevation={3} style={cardStyle}>
+        <H3>Generate Solutions</H3>
+        <p>Given a statement and, optionally, an editorial, generate a correct solution to the problem.</p>
+        <Button intent="primary" onClick={() => window.location.href = "/generate-solutions"}>Generate Solutions</Button>
+      </Card>
+    </div>
   </div>
 }
 
@@ -65,7 +80,9 @@ function App() {
             </Navbar.Group>
           </Navbar>
         </div>
-        <div style={{ height: "calc(100vh - 50px)" }}>
+        <div style={{
+          height: "calc(100vh - 50px)"
+        }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/generate-editorials" element={<GenerateEditorials />} />
