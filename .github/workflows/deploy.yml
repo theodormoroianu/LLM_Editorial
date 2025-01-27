@@ -1,0 +1,54 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm install
+
+    - name: Build React project
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy to remote server
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@140.238.214.57 << 'EOF'
+        cd ~/LLM_Editorial
+        git pull origin main
+
+        # Navigate to the backend directory and restart the backend process
+        cd backend
+        pgrep -f main.py | xargs kill -9
+        nohup python3 main.py > backend.log 2>&1 &
+        cd ..
+
+        # Navigate to the frontend directory and restart the frontend process
+        cd frontend
+        npm install
+        npm run build
+        pgrep -f "npx vite" | xargs kill -9
+        nohup sudo npx vite --host=0.0.0.0 --port=80 > frontend.log 2>&1 &
+        EOF
