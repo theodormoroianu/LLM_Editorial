@@ -22,10 +22,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@140.238.214.57 << 'EOF'
         # Activate the virtual environment and put secrets in the environment
-        echo $SHELL
-        
         source venv/bin/activate
-        source .bashrc
 
         # Update the repository
         cd ~/LLM_Editorial
@@ -35,7 +32,7 @@ jobs:
         cd backend
         pgrep -f main.py | xargs kill -9
         pip install -r requirements.txt
-        python3 main.py > backend.log 2>&1 &
+        python3 ALLOWED_TOKEN="${ALLOWED_TOKEN}" GEMINI_API_KEY="${GEMINI_API_KEY}" MISTRAL_API_KEY="${MISTRAL_API_KEY}" main.py > backend.log 2>&1 &
         disown
         cd ..
 
