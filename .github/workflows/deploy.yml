@@ -33,7 +33,7 @@ jobs:
         cd backend
         pgrep -f main.py | xargs kill -9
         pip install -r requirements.txt
-        nohup python3 main.py > backend.log 2>&1 &
+        nohup bash -c "source ~/.bashrc && python3 main.py" > backend.log 2>&1 &
         cd ..
 
         # Navigate to the frontend directory and restart the frontend process
