@@ -21,8 +21,9 @@ jobs:
     - name: Deploy to remote server
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@140.238.214.57 << 'EOF'
-        # Activate the virtual environment
+        # Activate the virtual environment and put secrets in the environment
         source venv/bin/activate
+        source .bashrc
 
         # Update the repository
         cd ~/LLM_Editorial
