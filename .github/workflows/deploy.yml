@@ -22,6 +22,8 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@140.238.214.57 << 'EOF'
         # Activate the virtual environment and put secrets in the environment
+        echo $SHELL
+        
         source venv/bin/activate
         source .bashrc
 
