@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { RequestSourceCodeType, RequestSourceCodeResponse, RequestSourceCode } from './api'
-import React from 'react'
 import { Button, Card, H3, Label, ProgressBar, TextArea } from '@blueprintjs/core'
 import AceEditor from "react-ace"
 
