@@ -37,7 +37,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@140.238.214.57 << 'EOF'
         cd ~/LLM_Editorial
-        git pull origin main
+        git pull origin master --force
 
         # Navigate to the backend directory and restart the backend process
         cd backend
