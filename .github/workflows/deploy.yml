@@ -21,12 +21,17 @@ jobs:
     - name: Deploy to remote server
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@140.238.214.57 << 'EOF'
+        # Activate the virtual environment
+        source venv/bin/activate
+
+        # Update the repository
         cd ~/LLM_Editorial
         git pull origin master --force
 
         # Navigate to the backend directory and restart the backend process
         cd backend
         pgrep -f main.py | xargs kill -9
+        pip install -r requirements.txt
         nohup python3 main.py > backend.log 2>&1 &
         cd ..
 
