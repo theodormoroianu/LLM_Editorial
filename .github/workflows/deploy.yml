@@ -33,7 +33,6 @@ jobs:
         # Navigate to the frontend directory and restart the frontend process
         cd frontend
         npm install
-        npm run build
         pgrep -f "npx vite" | xargs kill -9
         nohup sudo npx vite --host=0.0.0.0 --port=80 > frontend.log 2>&1 &
         EOF
