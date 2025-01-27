@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import GenerateEditorials from './GenerateEditorial'
 import GenerateSolution from './GenerateSolution'
 import CanvasAnimation from './Animation'
+import GradeSolution from './GradeSolution'
 
 
 function Home() {
@@ -77,6 +78,13 @@ function App() {
                 active={window.location.pathname.endsWith('/generate-solutions')}
                 onClick={() => window.location.href = '/generate-solutions'}
               />
+              <Button
+                className="bp5-minimal"
+                icon="automatic-updates"
+                text="Grade A Solution"
+                active={window.location.pathname.endsWith('/grade-solution')}
+                onClick={() => window.location.href = '/grade-solution'}
+              />
             </Navbar.Group>
           </Navbar>
         </div>
@@ -87,6 +95,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/generate-editorials" element={<GenerateEditorials />} />
             <Route path="/generate-solutions" element={<GenerateSolution />} />
+            <Route path="/grade-solution" element={<GradeSolution />} />
           </Routes>
         </div>
       </div>

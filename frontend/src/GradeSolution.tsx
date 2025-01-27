@@ -1,47 +1,37 @@
 import { useState } from 'react'
-import { RequestEditorialType, RequestEditorialResponse, RequestEditorial } from './api'
+import { RequestSolutionGradingType, RequestSolutionGrading, RequestSolutionGradingResponse } from './api'
 import { Button, H3, HTMLSelect, Label, ProgressBar, TextArea } from '@blueprintjs/core'
 import { MarkdownPreviewer } from './helpers'
 
 
 function GenerateEditorials() {
-  const [statement, setStatement] = useState('')
-  const [solutions, setSolutions] = useState<string[]>([])
+  const [statement, setStatement] = useState("Please provide the problem statement...")
+  const [solution, setSolution] = useState("Please provide the code...")
   const [humanRequest, setHumanRequest] = useState('')
-  const [editorial, setEditorial] = useState('Press submit to generate the editorial...')
+  const [editorial, setEditorial] = useState('Please provide an editorial...')
+  const [solutionGrading, setSolutionGrading] = useState('Press "Grade Solution"...')
   const [generating, setGenerating] = useState(false)
   const [authToken, setAuthToken] = useState(window.localStorage.getItem('authToken') || '')
   const [model, setModel] = useState<"mistral" | "gemini">("mistral")
-  const [stepByStep, setStepByStep] = useState("false")
-
-  const handleAddSolution = () => {
-    setSolutions([...solutions, ''])
-  }
-
-  const handleSolutionChange = (index: number, value: string) => {
-    const newSolutions = [...solutions]
-    newSolutions[index] = value
-    setSolutions(newSolutions)
-  }
 
   const handleSubmit = async () => {
-    const request: RequestEditorialType = {
+    const request: RequestSolutionGradingType = {
       statement,
-      solutions,
+      editorial,
+      solutionToGrade: solution,
       humanRequest,
       authToken,
       model,
-      stepByStep: stepByStep === "true",
     }
 
-    setEditorial('Generating editorial...')
+    setSolutionGrading('Generating grading...')
     setGenerating(true)
     console.log("Sending request", request)
-    const response: RequestEditorialResponse = await RequestEditorial(request).catch((error) => {
-      return { editorial: '' + error }
+    const response: RequestSolutionGradingResponse = await RequestSolutionGrading(request).catch((error) => {
+      return { grading: '' + error }
     })
     console.log("Received response", response)
-    setEditorial(response.editorial)
+    setSolutionGrading(response.grading)
     setGenerating(false)
   }
 
@@ -72,37 +62,35 @@ function GenerateEditorials() {
           />
         </Label>
 
-        <Label>
-          2. Available Correct Solutions
-          {solutions.map((solution, index) => (
-            <TextArea
-              key={index}
-              fill
-              value={solution}
-              onChange={(e) => handleSolutionChange(index, e.target.value)}
-              style={{
-                height: "100px",
-                resize: "vertical"
-              }}
-            />
-          ))}
-        </Label>
-
-        <div style={{
-          display: "flex",
-          flexDirection: "row",
-          marginTop: "-10px",
-        }}>
-          <Button icon="add" onClick={handleAddSolution} style={{ marginRight: "10px" }}>
-            Add a Solution
-          </Button>
-          <Button icon="delete" onClick={() => setSolutions(solutions.slice(0, -1))} disabled={solutions.length === 0}>
-            Delete Last Solution
-          </Button>
-        </div>
 
         <Label style={{ paddingTop: "20px" }}>
-          3. Additional LLM Instructions
+          2. Editorial
+          <TextArea
+            value={editorial}
+            fill
+            onChange={(e) => setEditorial(e.target.value)}
+            style={{
+              height: "100px",
+              resize: "vertical"
+            }}
+          />
+        </Label>
+
+        <Label>
+          3. Solution to grade
+          <TextArea
+            fill
+            value={solution}
+            onChange={(e) => setSolution(e.target.value)}
+            style={{
+              height: "100px",
+              resize: "vertical"
+            }}
+          />
+        </Label>
+
+        <Label style={{ paddingTop: "20px" }}>
+          4. Additional LLM Instructions
           <TextArea
             value={humanRequest}
             fill
@@ -113,19 +101,6 @@ function GenerateEditorials() {
             }}
           />
         </Label>
-
-        <Label style={{ paddingTop: "20px" }}>
-          4. Step by Step Editorial
-          <HTMLSelect
-            value={stepByStep}
-            onChange={(e) => setStepByStep(e.target.value === "true" ? "true" : "false")}
-            style={{ width: "100%" }}
-          >
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </HTMLSelect>
-        </Label>
-
 
         <Label style={{ paddingTop: "20px" }}>
           5. Model
@@ -153,7 +128,7 @@ function GenerateEditorials() {
         </Label>
 
         <Button intent="primary" onClick={handleSubmit}>
-          Generate Editorial
+          Grade Solution
         </Button>
       </div>
 
@@ -171,7 +146,7 @@ function GenerateEditorials() {
         display: "flex",
         flexDirection: "column",
       }}>
-        <H3>Editorial</H3>
+        <H3>Solution Grading</H3>
 
         <div style={{
           "position": "relative",
@@ -186,7 +161,7 @@ function GenerateEditorials() {
           </div>}
         </div>
 
-        <MarkdownPreviewer markdown={editorial} setMarkdown={setEditorial} />
+        <MarkdownPreviewer markdown={solutionGrading} setMarkdown={setSolutionGrading} />
       </div>
     </div >
   )

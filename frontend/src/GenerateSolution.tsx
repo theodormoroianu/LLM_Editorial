@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { RequestSourceCodeType, RequestSourceCodeResponse, RequestSourceCode } from './api'
-import { Button, Card, H3, Label, ProgressBar, TextArea } from '@blueprintjs/core'
+import { Button, Card, H3, HTMLSelect, Label, ProgressBar, TextArea } from '@blueprintjs/core'
 import AceEditor from "react-ace"
 
 import "ace-builds/src-noconflict/mode-c_cpp";
@@ -93,14 +93,14 @@ function GenerateSourceCode() {
 
         <Label style={{ paddingTop: "20px" }}>
           4. Model
-          <select
+          <HTMLSelect
             value={model}
             onChange={(e) => setModel(e.target.value as "mistral" | "gemini")}
             style={{ width: "100%" }}
           >
             <option value="mistral">Mistral</option>
             <option value="gemini">Gemini</option>
-          </select>
+          </HTMLSelect>
         </Label>
 
         <Label style={{ paddingTop: "20px" }}>

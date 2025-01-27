@@ -53,20 +53,65 @@ def ask_gemini(question: str) -> str:
     return gemini_client.generate_content(question).text
 
 
+class SolutionGradingRequestType(BaseModel):
+    statement: str
+    editorial: str
+    solutionToGrade: str
+    humanRequest: str
+    authToken: str
+    model: str
+
+    def to_message(self):
+        ans = "You are tasked with grading a solution for a competitive programming task. You are given the statement of the problem, an editorial, and the solution to grade.\n"
+
+        if self.humanRequest:
+            ans += f"You are also given a human request: `{self.humanRequest}`.\n"
+
+        ans += "You are now given the statement, between [START] and [END] blocks.\n"
+        ans += "\n\n[START]\n" + self.statement + "\n[END]\n"
+
+        ans += "You are now given the editorial, between [START] and [END] blocks.\n"
+        ans += "\n\n[START]\n" + self.editorial + "\n[END]\n"
+
+        ans += "You are now given the solution to grade, between [START] and [END] blocks.\n"
+        ans += "\n\n[START]\n" + self.solutionToGrade + "\n[END]\n"
+
+        ans += "Additional notes:\n"
+        ans += "* Sometimes, due to some issues, the statement is not coherent (or missing). If this is the case, and the statement does not look like a standard problem statement, please say that instead of generating a meaningless grading.\n"
+        ans += "* If you think the solution is too hard to grade, and are unable to generate a perfectly accurate grading, say that instead of generating a possibly incorrect grading.\n"
+        ans += "* Only generate the grading as a single string.\n"
+        ans += "* Do not include quotes or backticks to isolate the grading, as the user expects to only receive one string.\n"
+        ans += "* Your whole reply must be a valid grading, DO NOT ADD ANYTHING ELSE, SUCH AS BACKTICKS OR QUOTES. Your output must only contain the grading.\n"
+        ans += "* If you need to add additional information, please add it as a comment in the grading.\n"
+        ans += "\nPlease only answer with the grading as requested, as it is directly sent back to the user, do not send any other information."
+
+        return ans
+
+
+class SolutionGradingResponseType(BaseModel):
+    grading: str
+
+
 class EditorialRequestType(BaseModel):
     statement: str
     solutions: list[str]
     humanRequest: str
     authToken: str
     model: str
+    stepByStep: bool
 
     def to_message(self):
         ans = "You are tasked with creating a detailed editorial for a competitive programming task. You are given the statement of the problem. If the language is not english, please keep the same language for the editorial.\n"
         if self.solutions:
             ans += f" You are also given {len(self.solutions)} solutions to the problem, for helping you understand the solution."
-        ans += "You are tasked to write a detailed editorial for the problem, in a markdown format. The editorals should include the following sections:\n * A short explanation of the statement of the problem.\n * A detailed explanation of the test cases if they help the understanding of the problem.\n * Required well-known algorithms for the problem's solution (if you think it is required).\n * A detailed, step by step explanation of the solution. If some of the provided solutions are different, pick the easiest to understand.\n * A detailed explanation of the expected time complexity of the solution.\n * A detailed explanation of the expected space complexity of the solution.\n"
+        ans += "You are tasked to write a detailed editorial for the problem, in a markdown format. The editorals should include the following sections:\n * A short explanation of the statement of the problem.\n * A detailed explanation of the test cases if they help the understanding of the problem.\n * Required well-known algorithms for the problem's solution (if you think it is required).\n * A detailed explanation of the expected time complexity of the solution.\n * A detailed explanation of the expected space complexity of the solution.\n"
         if self.humanRequest:
             ans += f"You are also given a human request: `{self.humanRequest}`.\n"
+
+        if self.stepByStep:
+            ans += "You are requested to provide a step-by-step explanation of the solution. "
+            ans += "This means that you have to provide an easy way to understand the solution, with a step-by-step explanation of the solution.\n"
+            ans += "If a given step requires some algorithms or datastructures, explain them in the step.\n"
 
         ans += "You are now given the statement, between [START] and [END] blocks.\n"
         ans += "\n\n[START]\n" + self.statement + "\n[END]\n"
@@ -171,6 +216,28 @@ async def generate_editorials(request: SourceCodeRequestType):
         sourcecode = ask_gemini(request.to_message())
 
     return SourceCodeResponseType(sourceCode=sourcecode)
+
+
+@app.post("/api/grade-solution", response_model=SolutionGradingResponseType)
+async def grade_solution(request: SolutionGradingRequestType):
+    if request.authToken not in allowed_auth_tokens:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication token",
+        )
+
+    if request.model not in ["gemini", "mistral"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid model",
+        )
+
+    if request.model == "mistral":
+        grading = ask_mistral(request.to_message())
+    else:
+        grading = ask_gemini(request.to_message())
+
+    return SolutionGradingResponseType(grading=grading)
 
 
 if __name__ == "__main__":
