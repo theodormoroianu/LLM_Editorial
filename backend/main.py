@@ -21,7 +21,7 @@ mistral_client = Mistral(api_key=mistral_api_key)
 gemini_api_key = os.environ["GEMINI_API_KEY"]
 gemini_model = "gemini-large-latest"
 genai.configure(api_key=gemini_api_key)
-gemini_client = genai.GenerativeModel("gemini-2.0-flash")
+gemini_client = genai.GenerativeModel("gemini-2.0-flash-exp")
 
 # FastAPI app
 app = FastAPI()
