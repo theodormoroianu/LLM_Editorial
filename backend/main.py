@@ -82,6 +82,7 @@ class SolutionGradingRequestType(BaseModel):
         ans += "* Provide the grading in markdown format, without any additional information. Do not add the backticks or quotes to isolate the grading, as the user expects to only receive the grading.\n"
         ans += "* Please provide a comprehensive grading for each problem, where you explain why the solution is incorrect (if it is), and assign an adequate number of points, according to the editorial.\n"
         ans += "* At the very end of the grading, please provide the total number of points the solution received, and provide a list of things the student should improve on.\n"
+        ans += "* Very important: Please STICK TO THE EDITORIAL!! Unless you are convinced that the solution is an alternative correct solution, please stick to the editorial, and only award points according to the editorial.\n"
 
         return ans
 
