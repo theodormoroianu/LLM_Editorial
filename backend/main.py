@@ -62,12 +62,12 @@ class SolutionGradingRequestType(BaseModel):
     model: str
 
     def to_message(self):
-        ans = "You are tasked with grading a solution for a competitive programming task. You are given the statement of the problem, an editorial, and the solution to grade.\n"
+        ans = "You are tasked with grading a solution for a university exam. You are given the statements of the problem, an editorial with the number of points given for some scenarios, and the solution to grade.\n"
 
         if self.humanRequest:
             ans += f"You are also given a human request: `{self.humanRequest}`.\n"
 
-        ans += "You are now given the statement, between [START] and [END] blocks.\n"
+        ans += "You are now given the statements, between [START] and [END] blocks.\n"
         ans += "\n\n[START]\n" + self.statement + "\n[END]\n"
 
         ans += "You are now given the editorial, between [START] and [END] blocks.\n"
@@ -79,11 +79,9 @@ class SolutionGradingRequestType(BaseModel):
         ans += "Additional notes:\n"
         ans += "* Sometimes, due to some issues, the statement is not coherent (or missing). If this is the case, and the statement does not look like a standard problem statement, please say that instead of generating a meaningless grading.\n"
         ans += "* If you think the solution is too hard to grade, and are unable to generate a perfectly accurate grading, say that instead of generating a possibly incorrect grading.\n"
-        ans += "* Only generate the grading as a single string.\n"
-        ans += "* Do not include quotes or backticks to isolate the grading, as the user expects to only receive one string.\n"
-        ans += "* Your whole reply must be a valid grading, DO NOT ADD ANYTHING ELSE, SUCH AS BACKTICKS OR QUOTES. Your output must only contain the grading.\n"
-        ans += "* If you need to add additional information, please add it as a comment in the grading.\n"
-        ans += "\nPlease only answer with the grading as requested, as it is directly sent back to the user, do not send any other information."
+        ans += "* Provide the grading in markdown format, without any additional information. Do not add the backticks or quotes to isolate the grading, as the user expects to only receive the grading.\n"
+        ans += "* Please provide a comprehensive grading for each problem, where you explain why the solution is incorrect (if it is), and assign an adequate number of points, according to the editorial.\n"
+        ans += "* At the very end of the grading, please provide the total number of points the solution received, and provide a list of things the student should improve on.\n"
 
         return ans
 

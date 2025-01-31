@@ -6,7 +6,7 @@ import { MarkdownPreviewer } from './helpers'
 
 function GenerateEditorials() {
   const [statement, setStatement] = useState("Please provide the problem statement...")
-  const [solution, setSolution] = useState("Please provide the code...")
+  const [solution, setSolution] = useState("Please provide the solution...")
   const [humanRequest, setHumanRequest] = useState('')
   const [editorial, setEditorial] = useState('Please provide an editorial...')
   const [solutionGrading, setSolutionGrading] = useState('Press "Grade Solution"...')
@@ -48,6 +48,8 @@ function GenerateEditorials() {
         padding: "20px",
         overflowY: "scroll",
       }}>
+        <H3>Intro</H3>
+        <p>This form promps the model to grade a solution to an exam, given the statements which describe the exam's problems, and given an editorial with the solution and a clear breakdown of the grade.</p>
         <H3>Problem Details</H3>
         <Label>
           1. Problem Statement
@@ -76,7 +78,7 @@ function GenerateEditorials() {
           />
         </Label>
 
-        <Label>
+        <Label style={{ paddingTop: "20px" }}>
           3. Solution to grade
           <TextArea
             fill
